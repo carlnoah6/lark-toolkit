@@ -82,11 +82,13 @@ def list_chats(
         data = client.api("GET", url, token=tk)
         items = data.get("items", [])
         for c in items:
-            chats.append({
-                "chat_id": c["chat_id"],
-                "name": c.get("name", "(unnamed)"),
-                "user_count": c.get("user_count", 0),
-            })
+            chats.append(
+                {
+                    "chat_id": c["chat_id"],
+                    "name": c.get("name", "(unnamed)"),
+                    "user_count": c.get("user_count", 0),
+                }
+            )
         if not data.get("has_more"):
             break
         page_token = data.get("page_token", "")

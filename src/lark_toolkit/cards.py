@@ -46,10 +46,12 @@ def wrap_card(
     all_elements = list(elements)
 
     if timestamp:
-        all_elements.append({
-            "tag": "note",
-            "elements": [{"tag": "plain_text", "content": timestamp}],
-        })
+        all_elements.append(
+            {
+                "tag": "note",
+                "elements": [{"tag": "plain_text", "content": timestamp}],
+            }
+        )
 
     return {
         "config": {"wide_screen_mode": wide_screen},
@@ -89,10 +91,12 @@ def build_wait_card(
     elements: list[dict[str, Any]] = [{"tag": "markdown", "content": prompt}]
 
     if wait_type == "todo" and todo_guid:
-        elements.append({
-            "tag": "markdown",
-            "content": "Todo created — mark it complete in Lark to continue automatically.",
-        })
+        elements.append(
+            {
+                "tag": "markdown",
+                "content": "Todo created — mark it complete in Lark to continue automatically.",
+            }
+        )
 
     elements.append({"tag": "hr"})
 
@@ -100,34 +104,42 @@ def build_wait_card(
 
     if wait_type == "confirm" and options:
         for i, opt in enumerate(options):
-            actions.append({
-                "tag": "button",
-                "text": {"tag": "plain_text", "content": opt},
-                "type": "primary" if i == 0 else "default",
-                "value": {"action": "task_wait_respond", "task_id": task_id, "response": opt},
-            })
+            actions.append(
+                {
+                    "tag": "button",
+                    "text": {"tag": "plain_text", "content": opt},
+                    "type": "primary" if i == 0 else "default",
+                    "value": {"action": "task_wait_respond", "task_id": task_id, "response": opt},
+                }
+            )
     elif wait_type == "discuss":
-        actions.append({
-            "tag": "button",
-            "text": {"tag": "plain_text", "content": "Confirm & Continue"},
-            "type": "primary",
-            "value": {"action": "task_wait_respond", "task_id": task_id, "response": "__discuss_confirmed__"},
-        })
+        actions.append(
+            {
+                "tag": "button",
+                "text": {"tag": "plain_text", "content": "Confirm & Continue"},
+                "type": "primary",
+                "value": {"action": "task_wait_respond", "task_id": task_id, "response": "__discuss_confirmed__"},
+            }
+        )
     elif wait_type == "todo":
-        actions.append({
-            "tag": "button",
-            "text": {"tag": "plain_text", "content": "I've completed it"},
-            "type": "primary",
-            "value": {"action": "task_wait_respond", "task_id": task_id, "response": "__todo_manual_confirm__"},
-        })
+        actions.append(
+            {
+                "tag": "button",
+                "text": {"tag": "plain_text", "content": "I've completed it"},
+                "type": "primary",
+                "value": {"action": "task_wait_respond", "task_id": task_id, "response": "__todo_manual_confirm__"},
+            }
+        )
 
     # Always add cancel button
-    actions.append({
-        "tag": "button",
-        "text": {"tag": "plain_text", "content": "Cancel Task"},
-        "type": "danger",
-        "value": {"action": "task_wait_cancel", "task_id": task_id},
-    })
+    actions.append(
+        {
+            "tag": "button",
+            "text": {"tag": "plain_text", "content": "Cancel Task"},
+            "type": "danger",
+            "value": {"action": "task_wait_cancel", "task_id": task_id},
+        }
+    )
 
     if actions:
         elements.append({"tag": "action", "actions": actions})
@@ -227,11 +239,13 @@ class StreamingCard:
             im_url = f"{self.client.base_url}/im/v1/messages?receive_id_type=chat_id"
             req2 = Request(
                 im_url,
-                data=json.dumps({
-                    "receive_id": self.chat_id,
-                    "msg_type": "interactive",
-                    "content": json.dumps({"type": "card", "data": {"card_id": self.card_id}}),
-                }).encode(),
+                data=json.dumps(
+                    {
+                        "receive_id": self.chat_id,
+                        "msg_type": "interactive",
+                        "content": json.dumps({"type": "card", "data": {"card_id": self.card_id}}),
+                    }
+                ).encode(),
                 headers=self._headers(),
                 method="POST",
             )

@@ -64,12 +64,14 @@ def get_events(
 
         # All-day event
         if start_time.get("date"):
-            events.append(CalendarEvent(
-                summary=summary,
-                all_day=True,
-                start="all-day",
-                description=item.get("description", ""),
-            ))
+            events.append(
+                CalendarEvent(
+                    summary=summary,
+                    all_day=True,
+                    start="all-day",
+                    description=item.get("description", ""),
+                )
+            )
             continue
 
         # Timestamped event
@@ -91,16 +93,18 @@ def get_events(
                 if event_date < start_date or event_date > end_date:
                     continue
 
-            events.append(CalendarEvent(
-                summary=summary,
-                all_day=False,
-                start=st.strftime("%H:%M"),
-                end=et.strftime("%H:%M"),
-                start_dt=st,
-                end_dt=et,
-                description=item.get("description", ""),
-                recurrence=recurrence,
-            ))
+            events.append(
+                CalendarEvent(
+                    summary=summary,
+                    all_day=False,
+                    start=st.strftime("%H:%M"),
+                    end=et.strftime("%H:%M"),
+                    start_dt=st,
+                    end_dt=et,
+                    description=item.get("description", ""),
+                    recurrence=recurrence,
+                )
+            )
 
     events.sort(key=lambda e: e.start)
     return events
@@ -191,8 +195,11 @@ def _find_occurrence_in_range(
         if not until_dt:
             return True
         event_dt = datetime(
-            d.year, d.month, d.day,
-            original_start.hour, original_start.minute,
+            d.year,
+            d.month,
+            d.day,
+            original_start.hour,
+            original_start.minute,
             tzinfo=tz,
         ).astimezone(timezone.utc)
         return event_dt <= until_dt
