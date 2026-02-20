@@ -166,8 +166,26 @@ class OAuthCallbackHandler(http.server.BaseHTTPRequestHandler):
         action = event.get("action") or data.get("action")
         if action and isinstance(action, dict):
             action_value = action.get("value", {})
+            # Inject open_message_id so handlers can update the card via API
+            open_msg_id = (
+                event.get("open_message_id")
+                or data.get("open_message_id")
+                or event.get("context", {}).get("open_message_id")
+            )
+            if open_msg_id:
+                action_value["_open_message_id"] = open_msg_id
+            # Inject open_chat_id
+            open_chat_id = (
+                event.get("open_chat_id") or data.get("open_chat_id") or event.get("context", {}).get("open_chat_id")
+            )
+            if open_chat_id:
+                action_value["_open_chat_id"] = open_chat_id
+            # Log full payload for debugging
+            print(f"[oauth] card action keys: {list(data.keys())}, open_msg_id={open_msg_id}")
             if action_value.get("action") and self.card_action_handler:
-                result = self.card_action_handler(action_value)
+                # Access via class to avoid descriptor protocol binding
+                handler = type(self).card_action_handler
+                result = handler(action_value)
                 self._json_response(200, result)
                 return
 
