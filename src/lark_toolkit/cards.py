@@ -351,7 +351,7 @@ class StreamingCard:
                 url,
                 data=json.dumps({"settings": json.dumps({"streaming_mode": False}), "sequence": self.seq}).encode(),
                 headers=self._headers(),
-                method="PUT",
+                method="PATCH",
             )
             urlopen(req, timeout=10)
 
