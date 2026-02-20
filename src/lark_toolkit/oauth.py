@@ -176,9 +176,7 @@ class OAuthCallbackHandler(http.server.BaseHTTPRequestHandler):
                 action_value["_open_message_id"] = open_msg_id
             # Inject open_chat_id
             open_chat_id = (
-                event.get("open_chat_id")
-                or data.get("open_chat_id")
-                or event.get("context", {}).get("open_chat_id")
+                event.get("open_chat_id") or data.get("open_chat_id") or event.get("context", {}).get("open_chat_id")
             )
             if open_chat_id:
                 action_value["_open_chat_id"] = open_chat_id
