@@ -26,7 +26,7 @@ class TokenInfo:
 
     @property
     def is_expired(self) -> bool:
-        """Check if the token has expired (with 5-minute buffer)."""
+        """Check if the token has expired (compares current time to expires_at directly)."""
         import time
 
         return time.time() >= self.expires_at

@@ -54,7 +54,10 @@ def get_chat_members(
         members.extend(data.get("items", []))
         if not data.get("has_more"):
             break
-        page_token = data.get("page_token", "")
+        new_token = data.get("page_token", "")
+        if not new_token or new_token == page_token:
+            break
+        page_token = new_token
     return members
 
 
@@ -85,13 +88,16 @@ def list_chats(
             chats.append(
                 {
                     "chat_id": c["chat_id"],
-                    "name": c.get("name", "(unnamed)"),
+                    "name": c.get("name") or "(unnamed)",
                     "user_count": c.get("user_count", 0),
                 }
             )
         if not data.get("has_more"):
             break
-        page_token = data.get("page_token", "")
+        new_token = data.get("page_token", "")
+        if not new_token or new_token == page_token:
+            break
+        page_token = new_token
     return chats
 
 

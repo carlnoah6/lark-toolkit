@@ -391,7 +391,7 @@ def stream_to_card(
         return
 
     start = time.time()
-    accumulated: list[str] = []
+    accumulated_text = ""
     last_update = 0.0
 
     try:
@@ -400,17 +400,20 @@ def stream_to_card(
                 break
 
             if text_chunk:
-                accumulated.append(text_chunk)
+                accumulated_text += text_chunk
+                # Keep only the tail to avoid unbounded memory growth
+                if len(accumulated_text) > MAX_CONTENT_LEN:
+                    accumulated_text = accumulated_text[-MAX_CONTENT_LEN:]
 
             now = time.time()
             if now - last_update >= update_interval:
-                if accumulated:
-                    card.update("\n\n".join(accumulated))
+                if accumulated_text:
+                    card.update(accumulated_text)
                 if tool_status:
                     card.update_status(tool_status)
                 last_update = now
     except Exception as e:
         _log(f"Stream error: {e}")
 
-    final = "\n\n".join(accumulated) if accumulated else "Done"
+    final = accumulated_text if accumulated_text else "Done"
     card.close(final)

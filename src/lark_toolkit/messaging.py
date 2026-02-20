@@ -7,6 +7,7 @@ import mimetypes
 import os
 import time
 from typing import TYPE_CHECKING, Any
+from urllib.error import HTTPError, URLError
 from urllib.request import Request, urlopen
 
 from .types import LarkAPIError
@@ -153,8 +154,11 @@ def upload_image(
     req.add_header("Authorization", f"Bearer {tk}")
     req.add_header("Content-Type", f"multipart/form-data; boundary={boundary}")
 
-    resp = urlopen(req, timeout=30)
-    result = json.loads(resp.read().decode("utf-8"))
+    try:
+        with urlopen(req, timeout=30) as resp:
+            result = json.loads(resp.read().decode("utf-8"))
+    except (HTTPError, URLError, OSError) as exc:
+        raise LarkAPIError(f"Image upload network error: {exc}") from exc
 
     if result.get("code", 0) != 0:
         raise LarkAPIError(

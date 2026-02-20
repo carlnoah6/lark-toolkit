@@ -64,11 +64,17 @@ def get_events(
 
         # All-day event
         if start_time.get("date"):
+            date_str = start_time["date"]
+            try:
+                all_day_dt = datetime.strptime(date_str, "%Y-%m-%d").replace(tzinfo=tz)
+            except (ValueError, TypeError):
+                all_day_dt = None
             events.append(
                 CalendarEvent(
                     summary=summary,
                     all_day=True,
                     start="all-day",
+                    start_dt=all_day_dt,
                     description=item.get("description", ""),
                 )
             )
@@ -106,7 +112,7 @@ def get_events(
                 )
             )
 
-    events.sort(key=lambda e: e.start)
+    events.sort(key=lambda e: e.start_dt or datetime.min.replace(tzinfo=tz))
     return events
 
 

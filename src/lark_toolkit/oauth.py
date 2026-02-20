@@ -8,6 +8,7 @@ Provides an HTTP server that handles:
 
 from __future__ import annotations
 
+import contextlib
 import http.server
 import json
 import threading
@@ -104,6 +105,8 @@ def save_user_token(token_data: dict[str, Any], token_file: str | Path) -> bool:
     path.parent.mkdir(parents=True, exist_ok=True)
     with open(path, "w") as f:
         json.dump(token_data, f, indent=2, ensure_ascii=False)
+    with contextlib.suppress(OSError):
+        path.chmod(0o600)
     return True
 
 
